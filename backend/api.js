@@ -81,11 +81,16 @@ app.get('/horarios', (req, res) => {
 });
 
 app.get('/detalhe_agendamento', (req, res) => {
-    const name = String(req.query.Nome || req.query.nome || '').trim();
-    if (!name) return res.status(400).json({ erro: 'Informe o nome do cliente.' });
+    const searchTerm = String(req.query.busca || req.query.Nome || req.query.nome || req.query.email || req.query.Email || '').trim();
+    if (!searchTerm) return res.status(400).json({ erro: 'Informe o nome ou e-mail do cliente.' });
 
-    const sql = 'SELECT * FROM mydb.detalhe_agendamento WHERE LOWER(Nome) LIKE LOWER(?)';
-    db.query(sql, [`%${name}%`], (error, reservations) => {
+    const sql = `
+        SELECT d.*
+        FROM mydb.detalhe_agendamento d
+        INNER JOIN mydb.tbl_clientes c ON c.idclientes = d.Cod
+        WHERE LOWER(d.Nome) LIKE LOWER(?) OR LOWER(c.email) = LOWER(?)
+    `;
+    db.query(sql, [`%${searchTerm}%`, searchTerm], (error, reservations) => {
         if (error) {
             console.error('Erro ao consultar reservas:', error);
             return res.status(500).json({ erro: 'Não foi possível consultar as reservas.' });
