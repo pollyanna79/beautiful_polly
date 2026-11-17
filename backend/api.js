@@ -235,8 +235,10 @@ app.post('/tbl_clientes', (req, res) => {
 });
 
 const port = Number(process.env.PORT) || 3000;
-const server = app.listen(port, () => {
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
-});
+  });
+}
 
-module.exports = { app, server };
+module.exports = app;
