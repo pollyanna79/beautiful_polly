@@ -248,7 +248,7 @@ function voltarAoInicio() {
 }
 
 /**
- * Busca o catálogo de serviços na API e preenche os seletores da página.
+ * Busca o catálogo de serviços na API e preenche os seletores da página //.
  */
 async function carregarCatalogoDeServicos(enderecoBaseApi, situacaoApi) {
     try {
