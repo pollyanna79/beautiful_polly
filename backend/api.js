@@ -10,11 +10,16 @@ app.use(express.json());
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME_MYDB,
+    port: Number(process.env.DB_PORT) || 3306,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: {
+        rejectUnauthorized: true,
+        ca: process.env.DB_SSL_CA
+    }
 });
 
 const normalize = (value) => String(value || '')
