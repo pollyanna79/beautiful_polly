@@ -1,27 +1,10 @@
 {
-  "version": 2,
-  "builds": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "front-end",
+  "rewrites": [
     {
-      "src": "api.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "../front-end/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api.js"
-    },
-    {
-      "src": "/",
-      "dest": "../front-end/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "../front-end/$1"
+      "source": "/api/(.*)",
+      "destination": "/api"
     }
   ]
 }
