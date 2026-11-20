@@ -7,7 +7,7 @@ function inicializarPagina() {
     const ambienteLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname) ||
         window.location.protocol === 'file:';
     const enderecoBaseApi = window.ENDERECO_BASE_API ||
-        (ambienteLocal ? 'http://localhost:3000' : 'https://beautifulpolly-backend.vercel.app');
+    (ambienteLocal ? 'http://localhost:3000' : `${window.location.origin}/api`);
     const situacaoApi = document.getElementById('situacao-servicos');
     const formularioDados = document.getElementById('form-coleta-dados');
     const modalAgendamento = document.getElementById('modal-agendamento');

@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "beautiful-polly",
   "version": "1.0.0",
   "description": "",
   "main": "api.js",
@@ -81,10 +81,12 @@
     "unpipe": "^1.0.0",
     "vary": "^1.1.2",
     "wrappy": "^1.0.2"
+   
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node backend/api.js"
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",

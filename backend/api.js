@@ -15,6 +15,10 @@ if (missingDatabaseVariables.length) {
     throw new Error(`Configure as variáveis do banco: ${missingDatabaseVariables.join(', ')}.`);
 }
 
+const sslCa = process.env.DB_SSL_CA
+    ? process.env.DB_SSL_CA.replace(/\\n/g, '\n')
+    : undefined;
+
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -24,6 +28,7 @@ const db = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
+     connectTimeout: 10000,
     ssl: {
         rejectUnauthorized: false,
         ca: process.env.DB_SSL_CA
@@ -44,7 +49,22 @@ const allowedCities = new Map([
     ['ribeirao pires', 'Ribeirão Pires'],
     ['capuava', 'Capuava']
 ]);
-
+// Responde com erro claro (em vez de derrubar a função) quando faltam variáveis de ambiente.
+api.use((req, res, next) => {
+    if (db) return next();
+    res.status(503).json({
+        erro: `Variáveis de ambiente ausentes: ${missingDatabaseVariables.join(', ')}.`
+    });
+});
+api.get('/health', (req, res) => {
+    db.query('SELECT 1 AS ok, DATABASE() AS banco', (error, rows) => {
+        if (error) {
+            console.error('Falha no teste de conexão com o banco:', error);
+            return res.status(500).json({ ok: false, codigo: error.code, erro: error.message });
+        }
+        res.json({ ok: true, banco: rows[0].banco });
+    });
+});
 api.get('/servicos', (req, res) => {
     const sql = `
         SELECT id_servico, nome_servico, preco, duracao_estimada, id_funcionario
