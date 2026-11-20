@@ -16,6 +16,10 @@
       "dest": "api.js"
     },
     {
+      "src": "/",
+      "dest": "../front-end/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "../front-end/$1"
     }
