@@ -4,7 +4,10 @@
  * Inicializa os eventos da página depois que o navegador terminar de montar o HTML.
  */
 function inicializarPagina() {
-    const enderecoBaseApi = window.ENDERECO_BASE_API || 'http://localhost:3000';
+    const ambienteLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname) ||
+        window.location.protocol === 'file:';
+    const enderecoBaseApi = window.ENDERECO_BASE_API ||
+        (ambienteLocal ? 'http://localhost:3000' : 'https://beautifulpolly-backend.vercel.app');
     const situacaoApi = document.getElementById('situacao-servicos');
     const formularioDados = document.getElementById('form-coleta-dados');
     const modalAgendamento = document.getElementById('modal-agendamento');

@@ -1,11 +1,19 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 
 const app = express();
+const api = express.Router();
 app.use(cors());
 app.use(express.json());
+
+const requiredDatabaseVariables = ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME_MYDB'];
+const missingDatabaseVariables = requiredDatabaseVariables.filter((name) => !process.env[name]);
+if (missingDatabaseVariables.length) {
+    throw new Error(`Configure as variáveis do banco: ${missingDatabaseVariables.join(', ')}.`);
+}
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -37,7 +45,7 @@ const allowedCities = new Map([
     ['capuava', 'Capuava']
 ]);
 
-app.get('/servicos', (req, res) => {
+api.get('/servicos', (req, res) => {
     const sql = `
         SELECT id_servico, nome_servico, preco, duracao_estimada, id_funcionario
         FROM servicos
@@ -53,7 +61,7 @@ app.get('/servicos', (req, res) => {
     });
 });
 
-app.get('/horarios', (req, res) => {
+api.get('/horarios', (req, res) => {
     const serviceId = Number(req.query.id_servico);
     const date = String(req.query.data || '');
     const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
@@ -85,7 +93,7 @@ app.get('/horarios', (req, res) => {
     });
 });
 
-app.get('/detalhe_agendamento', (req, res) => {
+api.get('/detalhe_agendamento', (req, res) => {
     const searchTerm = String(req.query.busca || req.query.Nome || req.query.nome || req.query.email || req.query.Email || '').trim();
     if (!searchTerm) return res.status(400).json({ erro: 'Informe o nome ou e-mail do cliente.' });
 
@@ -104,7 +112,7 @@ app.get('/detalhe_agendamento', (req, res) => {
     });
 });
 
-app.post('/tbl_clientes', (req, res) => {
+api.post('/tbl_clientes', (req, res) => {
     const {
         cliente_nome,
         telefone,
@@ -238,6 +246,9 @@ app.post('/tbl_clientes', (req, res) => {
         });
     });
 });
+
+app.use('/api', api);
+app.use('/', api);
 
 const port = Number(process.env.PORT) || 3000;
 if (process.env.NODE_ENV !== 'production') {
